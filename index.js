@@ -27,6 +27,13 @@ const server = createServer((req, res) => {
       res.end('We do not have user with such id');
     }
   }
+  if (url.includes('/users') && method === 'POST') {
+    let data = '';
+    req.on('data', (chunk) => (data += chunk));
+    req.on('end', () => {
+      console.log(data);
+    });
+  }
 });
 
 server.listen(port, () => console.log(`Server listened in port ${port}`));
