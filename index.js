@@ -2,8 +2,9 @@ import { createServer } from 'http';
 import users from './utils/users.js';
 import { validate, v4 as uuidv4 } from 'uuid';
 
+const port = process.env.PORT || 4000;
+
 let workUsers = users;
-const port = 3000;
 const server = createServer((req, res) => {
   const { url, method } = req;
   req.on('error', (err) => {
