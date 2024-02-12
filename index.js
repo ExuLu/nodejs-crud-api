@@ -117,3 +117,5 @@ const server = createServer((req, res) => {
 });
 
 server.listen(port, () => console.log(`Server listened in port ${port}`));
+
+export default server;
