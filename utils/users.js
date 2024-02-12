@@ -1,15 +1,11 @@
+const { v4: uuidv4 } = require('uuid');
+
 const users = [
   {
-    id: 1,
-    userName: 'littlepony',
-  },
-  {
-    id: 2,
-    userName: 'teddybear',
-  },
-  {
-    id: 3,
-    userName: 'magicunicorn',
+    id: uuidv4(),
+    username: 'littlepony',
+    age: 19,
+    hobbies: ['Collect butterflies', 'Play in rock band'],
   },
 ];
 export default users;
