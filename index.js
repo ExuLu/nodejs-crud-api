@@ -5,6 +5,10 @@ import { validate, v4 as uuidv4 } from 'uuid';
 const port = 3000;
 const server = createServer((req, res) => {
   const { url, method } = req;
+  req.on('error', (err) => {
+    res.writeHead(500, { 'Content-Type': 'text/plain' });
+    res.end('Oops! Something went wrong');
+  });
   if (url === '/users' && method === 'GET') {
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify(users));
