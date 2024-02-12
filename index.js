@@ -39,7 +39,14 @@ const server = createServer((req, res) => {
     let data = '';
     req.on('data', (chunk) => (data += chunk));
     req.on('end', () => {
-      const parsedData = JSON.parse(data);
+      let parsedData;
+      try {
+        parsedData = JSON.parse(data);
+      } catch (err) {
+        res.writeHead(500, { 'Content-Type': 'text/plain' });
+        res.end('Oops! Something went wrong');
+        return;
+      }
       const { username, age, hobbies } = parsedData;
       if (!username || !age || !hobbies instanceof Array) {
         res.writeHead(400, { 'Content-Type': 'text/plain' });
