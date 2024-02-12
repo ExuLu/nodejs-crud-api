@@ -107,7 +107,7 @@ const server = createServer((req, res) => {
     const withoutUser = workUsers.filter((user) => user.id !== id);
     workUsers = withoutUser;
 
-    res.writeHead(204, { 'Content-Type': 'application/json' });
+    res.writeHead(204);
     res.end();
     return;
   }
