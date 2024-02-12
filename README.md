@@ -19,6 +19,7 @@ To test app:
 npm run test
 ```
 
+You can exit an app or tests with ctrl + C.
 
 To get all users you need to send GET request to http://localhost:4000/users
 To get one users you need to send GET request to http://localhost:4000/users/userId, where userId is id of user you want to get
