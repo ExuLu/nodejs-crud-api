@@ -31,7 +31,7 @@ const server = createServer((req, res) => {
       res.end(JSON.stringify(user));
     } else {
       res.writeHead(404, { 'Content-Type': 'text/plain' });
-      res.end('We do not have user with such id');
+      res.end('There is no user with such id');
     }
     return;
   }
@@ -48,7 +48,12 @@ const server = createServer((req, res) => {
         return;
       }
       const { username, age, hobbies } = parsedData;
-      if (!username || !age || !hobbies instanceof Array) {
+      if (!username || !age) {
+        res.writeHead(400, { 'Content-Type': 'text/plain' });
+        res.end('Please, enter all required data');
+        return;
+      }
+      if (!hobbies && hobbies != []) {
         res.writeHead(400, { 'Content-Type': 'text/plain' });
         res.end('Please, enter all required data');
         return;
