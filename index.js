@@ -52,7 +52,13 @@ const server = createServer((req, res) => {
     let data = '';
     req.on('data', (chunk) => (data += chunk));
     req.on('end', () => {
-      const parsedData = JSON.parse(data);
+      try {
+        const parsedData = JSON.parse(data);
+      } catch (err) {
+        res.writeHead(500, { 'Content-Type': 'text/plain' });
+        res.end('Oops! Something went wrong');
+        return;
+      }
       const { username, hobbies, age } = parsedData;
       const id = url.slice(url.lastIndexOf('/') + 1);
       const isUUID = validate(id);
