@@ -14,6 +14,12 @@ To start app:
 npm run start:dev
 ```
 
+To test app:
+```
+npm run test
+```
+
+
 To get all users you need to send GET request to http://localhost:4000/users
 To get one users you need to send GET request to http://localhost:4000/users/userId, where userId is id of user you want to get
 To create new user you need to send POST request to http://localhost:4000/users and in body you need to add JSON file with fields: username, age, hobbies
