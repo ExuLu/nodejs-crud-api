@@ -44,6 +44,38 @@ const server = createServer((req, res) => {
       res.end(JSON.stringify(newUser));
     });
   }
+  if (url.includes('/users/') && method === 'PUT') {
+    let data = '';
+    req.on('data', (chunk) => (data += chunk));
+    req.on('end', () => {
+      const parsedData = JSON.parse(data);
+      const { username, hobbies, age } = parsedData;
+      const id = url.slice(url.lastIndexOf('/') + 1);
+      const isUUID = validate(id);
+      if (!isUUID) {
+        res.writeHead(400, { 'Content-Type': 'text/plain' });
+        res.end('The id has wrong format');
+        return;
+      }
+      const editUser = users.find((user) => user.id === id);
+      if (!editUser) {
+        res.writeHead(404, { 'Content-Type': 'text/plain' });
+        res.end('There is no user with such id');
+        return;
+      }
+
+      if (username) editUser.username = username;
+      if (hobbies instanceof Array) editUser.hobbies = hobbies;
+      if (age) editUser.age = age;
+
+      let newUsers = users;
+      const usersWithoutNewUser = users.filter((user) => user.id !== id);
+      newUsers = { ...usersWithoutNewUser, editUser };
+
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify(editUser));
+    });
+  }
 });
 
 server.listen(port, () => console.log(`Server listened in port ${port}`));
