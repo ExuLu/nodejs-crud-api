@@ -1,6 +1,6 @@
 import { createServer } from 'http';
 import users from './utils/users.js';
-import { validate } from 'uuid';
+import { validate, v4 as uuidv4 } from 'uuid';
 
 const port = 3000;
 const server = createServer((req, res) => {
@@ -31,7 +31,17 @@ const server = createServer((req, res) => {
     let data = '';
     req.on('data', (chunk) => (data += chunk));
     req.on('end', () => {
-      console.log(data);
+      const parsedData = JSON.parse(data);
+      const { username, age, hobbies } = parsedData;
+      if (!username || !age || !hobbies instanceof Array) {
+        res.writeHead(400, { 'Content-Type': 'text/plain' });
+        res.end('Please, enter all required data');
+        return;
+      }
+      const newUser = { ...parsedData, id: uuidv4() };
+      users.push(newUser);
+      res.writeHead(201, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify(newUser));
     });
   }
 });
