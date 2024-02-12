@@ -1,4 +1,4 @@
-const { v4: uuidv4 } = require('uuid');
+import { v4 as uuidv4 } from 'uuid';
 
 const users = [
   {
@@ -6,6 +6,12 @@ const users = [
     username: 'littlepony',
     age: 19,
     hobbies: ['Collect butterflies', 'Play in rock band'],
+  },
+  {
+    id: uuidv4(),
+    username: 'littlefoxy',
+    age: 25,
+    hobbies: ['Hunting', 'Eating'],
   },
 ];
 export default users;
