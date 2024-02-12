@@ -86,6 +86,29 @@ const server = createServer((req, res) => {
       res.end(JSON.stringify(editUser));
     });
   }
+
+  if (url.includes('/users/') && method === 'DELETE') {
+    const id = url.slice(url.lastIndexOf('/') + 1);
+    const isUUID = validate(id);
+    if (!isUUID) {
+      res.writeHead(400, { 'Content-Type': 'text/plain' });
+      res.end('The id has wrong format');
+      return;
+    }
+    const deleteUser = users.find((user) => user.id === id);
+    if (!deleteUser) {
+      res.writeHead(404, { 'Content-Type': 'text/plain' });
+      res.end('There is no user with such id');
+      return;
+    }
+
+    let newUsers = users;
+    const usersWithoutDeleteUser = users.filter((user) => user.id !== id);
+    newUsers = usersWithoutDeleteUser;
+
+    res.writeHead(204, { 'Content-Type': 'text/plain' });
+    res.end(JSON.stringify('User have been deleted'));
+  }
 });
 
 server.listen(port, () => console.log(`Server listened in port ${port}`));
