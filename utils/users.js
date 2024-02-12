@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 
-const users = [
+let users = [
   {
     id: uuidv4(),
     username: 'littlepony',

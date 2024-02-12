@@ -2,6 +2,7 @@ import { createServer } from 'http';
 import users from './utils/users.js';
 import { validate, v4 as uuidv4 } from 'uuid';
 
+let workUsers = users;
 const port = 3000;
 const server = createServer((req, res) => {
   const { url, method } = req;
@@ -11,7 +12,8 @@ const server = createServer((req, res) => {
   });
   if (url === '/users' && method === 'GET') {
     res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify(users));
+    res.end(JSON.stringify(workUsers));
+    return;
   }
   if (url.includes('/users/') && method === 'GET') {
     const id = url.slice(url.lastIndexOf('/') + 1);
@@ -21,7 +23,7 @@ const server = createServer((req, res) => {
       res.end('The id has wrong format');
       return;
     }
-    const user = users.find((use) => use.id === id);
+    const user = workUsers.find((use) => use.id === id);
 
     if (user) {
       res.writeHead(200, { 'Content-Type': 'application/json' });
@@ -30,6 +32,7 @@ const server = createServer((req, res) => {
       res.writeHead(404, { 'Content-Type': 'text/plain' });
       res.end('We do not have user with such id');
     }
+    return;
   }
   if (url.includes('/users') && method === 'POST') {
     let data = '';
@@ -43,17 +46,19 @@ const server = createServer((req, res) => {
         return;
       }
       const newUser = { ...parsedData, id: uuidv4() };
-      users.push(newUser);
+      workUsers.push(newUser);
       res.writeHead(201, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify(newUser));
     });
+    return;
   }
   if (url.includes('/users/') && method === 'PUT') {
     let data = '';
     req.on('data', (chunk) => (data += chunk));
     req.on('end', () => {
+      let parsedData;
       try {
-        const parsedData = JSON.parse(data);
+        parsedData = JSON.parse(data);
       } catch (err) {
         res.writeHead(500, { 'Content-Type': 'text/plain' });
         res.end('Oops! Something went wrong');
@@ -67,7 +72,7 @@ const server = createServer((req, res) => {
         res.end('The id has wrong format');
         return;
       }
-      const editUser = users.find((user) => user.id === id);
+      const editUser = workUsers.find((user) => user.id === id);
       if (!editUser) {
         res.writeHead(404, { 'Content-Type': 'text/plain' });
         res.end('There is no user with such id');
@@ -78,13 +83,10 @@ const server = createServer((req, res) => {
       if (hobbies instanceof Array) editUser.hobbies = hobbies;
       if (age) editUser.age = age;
 
-      let newUsers = users;
-      const usersWithoutNewUser = users.filter((user) => user.id !== id);
-      newUsers = { ...usersWithoutNewUser, editUser };
-
       res.writeHead(200, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify(editUser));
     });
+    return;
   }
 
   if (url.includes('/users/') && method === 'DELETE') {
@@ -95,20 +97,22 @@ const server = createServer((req, res) => {
       res.end('The id has wrong format');
       return;
     }
-    const deleteUser = users.find((user) => user.id === id);
+    const deleteUser = workUsers.find((user) => user.id === id);
     if (!deleteUser) {
       res.writeHead(404, { 'Content-Type': 'text/plain' });
       res.end('There is no user with such id');
       return;
     }
 
-    let newUsers = users;
-    const usersWithoutDeleteUser = users.filter((user) => user.id !== id);
-    newUsers = usersWithoutDeleteUser;
+    const withoutUser = workUsers.filter((user) => user.id !== id);
+    workUsers = withoutUser;
 
-    res.writeHead(204, { 'Content-Type': 'text/plain' });
-    res.end(JSON.stringify('User have been deleted'));
+    res.writeHead(204, { 'Content-Type': 'application/json' });
+    res.end();
+    return;
   }
+  res.writeHead(404, { 'Content-Type': 'text/plain' });
+  res.end('Oops! Try to change url or method');
 });
 
 server.listen(port, () => console.log(`Server listened in port ${port}`));
